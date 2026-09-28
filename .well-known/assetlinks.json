@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.dongcyun_agentmster50.realtimetx",
+        "sha256_cert_fingerprints": ["22:34:AB:9B:B0:F5:B7:DB:91:98:57:47:AF:EB:A9:D0:74:C6:D2:D8:15:DF:F6:17:C5:41:CF:D0:24:D9:89:02"]
+      }
+    }]
