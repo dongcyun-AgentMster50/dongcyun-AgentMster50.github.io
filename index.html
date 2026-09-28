@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#070b16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="실시간 통역">
+  <title>실시간 통역</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <div id="app">
+    <!-- 마주보기 모드: 상대방 쪽 패널 (180° 회전) -->
+    <section id="partnerPanel" class="partner" hidden>
+      <div class="partner-inner">
+        <div class="partner-label" id="partnerLabel">Tap your language and speak</div>
+        <div class="partner-text" id="partnerText">Hello! 👋<br>Привет!</div>
+        <div class="partner-mics">
+          <button class="mic mic-sm" data-lang="en" aria-label="Speak English">
+            <span class="mic-face"><b>EN</b><small>English</small></span>
+            <span class="wave"><i></i><i></i><i></i><i></i><i></i></span>
+          </button>
+          <button class="mic mic-sm" data-lang="ru" aria-label="Говорить по-русски">
+            <span class="mic-face"><b>RU</b><small>Русский</small></span>
+            <span class="wave"><i></i><i></i><i></i><i></i><i></i></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" data-icon="logo"></div>
+        <div class="brand-text">
+          <h1>실시간 통역</h1>
+          <p id="statusText"><span class="dot"></span><span class="st">대기 중</span></p>
+        </div>
+      </div>
+      <div class="actions">
+        <button id="btnF2F" class="icon-btn" aria-label="마주보기 모드" title="마주보기 모드" data-icon="flip"></button>
+        <button id="btnSettings" class="icon-btn" aria-label="설정" title="설정" data-icon="sliders"></button>
+      </div>
+    </header>
+
+    <main id="feed" class="feed">
+      <div id="empty" class="empty">
+        <div class="empty-orb" data-icon="mic"></div>
+        <h2>말하면 바로 통역해요</h2>
+        <p><b class="t-en">EN</b> · <b class="t-ru">RU</b> 버튼 → 상대방 말을 한국어로<br><b class="t-ko">한국어</b> 버튼 → 내 말을 영어·러시아어로</p>
+        <ul class="tips">
+          <li>버튼을 한 번 누르면 계속 듣고, 다시 누르면 멈춰요</li>
+          <li>번역은 자동으로 소리 내어 읽어줘요</li>
+          <li>상단 <span data-icon="flip" class="inline-ic"></span> 버튼으로 마주보기 모드</li>
+        </ul>
+      </div>
+      <div id="messages" aria-live="polite"></div>
+
+      <!-- 실시간 인식 중 카드 -->
+      <article id="live" class="bubble live" hidden>
+        <div class="b-head">
+          <span class="chip" id="liveChip">EN</span>
+          <span class="b-name" id="liveName">듣는 중</span>
+          <span class="eq"><i></i><i></i><i></i><i></i></span>
+        </div>
+        <p class="orig live-orig" id="liveOrig"></p>
+        <div class="trs" id="liveTrs"></div>
+      </article>
+    </main>
+
+    <form id="composer" class="composer" hidden>
+      <input id="composerInput" type="text" autocomplete="off" enterkeyhint="send"
+             placeholder="입력하세요 · Type · Введите">
+      <button type="submit" class="send" aria-label="번역" data-icon="send"></button>
+    </form>
+
+    <nav class="dock">
+      <div class="dock-row">
+        <button class="mic" data-lang="ru" aria-label="러시아어 듣기">
+          <span class="mic-face"><b>RU</b><small>Русский</small></span>
+          <span class="wave"><i></i><i></i><i></i><i></i><i></i></span>
+        </button>
+        <button class="mic mic-main" data-lang="ko" aria-label="한국어 듣기">
+          <span class="mic-face"><span class="ic" data-icon="mic"></span><small>한국어</small></span>
+          <span class="wave"><i></i><i></i><i></i><i></i><i></i></span>
+        </button>
+        <button class="mic" data-lang="en" aria-label="영어 듣기">
+          <span class="mic-face"><b>EN</b><small>English</small></span>
+          <span class="wave"><i></i><i></i><i></i><i></i><i></i></span>
+        </button>
+      </div>
+      <div class="dock-sub">
+        <button id="btnKeyboard" class="pill" type="button"><span data-icon="keyboard"></span>입력</button>
+        <span id="hint" class="hint">언어 버튼을 누르고 말하세요</span>
+        <button id="btnTargets" class="pill" type="button">한 → <span id="targetsLabel">EN·RU</span></button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- 설정 바텀시트 -->
+  <div id="sheet" class="sheet" hidden>
+    <div class="sheet-backdrop" data-close></div>
+    <div class="sheet-panel" role="dialog" aria-label="설정">
+      <div class="grabber"></div>
+      <div class="sheet-head">
+        <h3>설정</h3>
+        <button class="icon-btn" data-close aria-label="닫기" data-icon="x"></button>
+      </div>
+
+      <label class="row">
+        <div><b>번역 자동 읽기</b><small>번역 결과를 바로 음성으로 들려줘요</small></div>
+        <input type="checkbox" class="switch" id="optAutoSpeak">
+      </label>
+      <label class="row">
+        <div><b>연속 듣기 (핸즈프리)</b><small>읽기가 끝나면 자동으로 다시 들어요</small></div>
+        <input type="checkbox" class="switch" id="optHandsFree">
+      </label>
+      <div class="row col">
+        <div><b>한국어 → 번역 언어</b><small>한국어로 말할 때 번역·읽어줄 언어</small></div>
+        <div class="seg" id="optTargets">
+          <button type="button" data-v="both">EN + RU</button>
+          <button type="button" data-v="en">EN</button>
+          <button type="button" data-v="ru">RU</button>
+        </div>
+      </div>
+      <div class="row col">
+        <div><b>읽기 속도</b><small id="rateLabel">1.0×</small></div>
+        <input type="range" id="optRate" min="0.6" max="1.4" step="0.1">
+      </div>
+      <div class="row col">
+        <div><b>상태 점검</b><small id="diag">확인 중…</small></div>
+      </div>
+      <button id="btnClear" class="danger-btn" type="button"><span data-icon="trash"></span>대화 기록 지우기</button>
+    </div>
+  </div>
+
+  <div id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>

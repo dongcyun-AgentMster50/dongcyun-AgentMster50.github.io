@@ -1,0 +1,7 @@
+# 자체 서명 인증서 (개인 키 포함 — 절대 공개 금지)
+certs/
+.claude/
+*.apk
+*.aab
+*.keystore
+pwabuilder-*/
