@@ -10,7 +10,16 @@
 | 입력 | 키보드로 입력해서 번역 |
 | 한 → EN·RU | 한국어 번역 대상 전환 (둘 다 / 영어 / 러시아어) |
 
-## 실행
+## 설치
+
+- **Android 앱(APK)**: `pwabuilder-apk/RealtimeTX.apk` 를 휴대폰에 복사 → 열기 → "출처를 알 수 없는 앱" 허용 후 설치
+- **웹앱**: https://dongcyun-agentmster50.github.io/ → Chrome 메뉴 "앱 설치" / Safari "홈 화면에 추가"
+
+> APK 는 TWA(Trusted Web Activity) 방식: 설치된 Chrome 이 위 주소를 앱 화면으로 띄웁니다.
+> 웹 파일을 수정해서 push 하면 APK 재설치 없이 바로 반영됩니다.
+> `pwabuilder-apk/signing.keystore` + `signing-key-info.txt` 는 **업데이트·Play 스토어 등록에 필수** — 안전한 곳에 백업하세요 (git 에는 올라가지 않음).
+
+## 로컬 개발 실행
 
 ```bash
 node server.js
